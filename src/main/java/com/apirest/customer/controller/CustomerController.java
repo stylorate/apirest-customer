@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 @CrossOrigin(origins = {"http://localhost:4200"},
         methods = {RequestMethod.GET})
@@ -28,7 +29,7 @@ public class CustomerController {
 
     Logger log = (Logger) Logger.getLogger(CustomerController.class);
 
-    @GetMapping
+    @GetMapping("set")
     public ResponseEntity<ResponseDTO> create(@Valid @RequestBody CustomerDTO request) {
         log.info("Into controller");
         try {
@@ -40,5 +41,15 @@ public class CustomerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(
                     new ResponseDTO().setMsg(Constants.NOT_LEGAL_AGE_ERROR));
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseDTO> getList() {
+        ArrayList<CustomerDTO> list = service.getList();
+        return (list.isEmpty())
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(
+                new ResponseDTO().setMsg(Constants.NOT_FOUND))
+                : ResponseEntity.status(HttpStatus.OK.value()).body(
+                new ResponseDTO().setList(list).setMsg(HttpStatus.OK.getReasonPhrase()));
     }
 }
