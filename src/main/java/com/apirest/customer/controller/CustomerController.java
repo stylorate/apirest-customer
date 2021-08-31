@@ -33,6 +33,10 @@ public class CustomerController {
     public ResponseEntity<ResponseDTO> create(@Valid @RequestBody CustomerDTO request) {
         log.info("Into controller");
         try {
+            if (!request.getDocumentNumber().matches(Constants.REGEX_ONLY_NUMBERS)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(
+                        new ResponseDTO().setMsg(String.format(Constants.REGEX_ERROR_ONLY_NUMBERS, "DocumentNumber")));
+            }
             return ResponseEntity.status(HttpStatus.CREATED.value())
                     .body(new ResponseDTO().setObject(
                             service.sendCustomer(request)).setMsg(HttpStatus.OK.getReasonPhrase()));
